@@ -1,26 +1,9 @@
 {
   "version": 2,
-  "name": "latinflag-store",
-  "builds": [
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1",
-      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/client/$1"
-    }
-  ],
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/build",
+  "installCommand": "cd client && npm install",
+  "framework": "create-react-app",
   "env": {
     "REACT_APP_SUPABASE_URL": "@supabase_url",
     "REACT_APP_SUPABASE_ANON_KEY": "@supabase_anon_key",
@@ -37,9 +20,5 @@
     "client/api/*.js": {
       "maxDuration": 30
     }
-  },
-  "installCommand": "cd client && npm install",
-  "buildCommand": "cd client && npm run build",
-  "outputDirectory": "client/build",
-  "framework": "create-react-app"
+  }
 }
