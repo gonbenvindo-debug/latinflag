@@ -2,7 +2,14 @@
 
 Plataforma completa de e-commerce para venda de bandeiras e produtos personalizados, desenvolvida como revendedor da Adivin Beach Flag sem expor a origem dos produtos.
 
-## 🚀 Funcionalidades
+## 🚀 Arquitetura Moderna
+
+- **Frontend**: React + TypeScript + Tailwind CSS (Vercel)
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **Pagamentos**: Stripe
+- **Deploy**: Vercel (frontend) + Supabase (backend)
+
+## 🛍️ Funcionalidades
 
 ### 🛍️ Para Clientes
 - **Catálogo Completo**: Bandeiras, Fly Banners, Banners, Gazebos, Displays e Mastros
@@ -20,106 +27,109 @@ Plataforma completa de e-commerce para venda de bandeiras e produtos personaliza
 - **Integração com Fornecedor**: Envio automático de encomendas para Adivin
 
 ### 🔧 Características Técnicas
-- **Stack**: Node.js + Express + MongoDB + React + TypeScript
-- **Autenticação**: JWT com sistema seguro
-- **Upload de Ficheiros**: Suporte para designs personalizados
-- **API RESTful**: Endpoints completos e documentados
+- **Stack Moderno**: React + TypeScript + Supabase + Tailwind CSS
+- **Autenticação**: Supabase Auth com sistema seguro
+- **Upload de Ficheiros**: Supabase Storage para designs personalizados
+- **API**: Supabase REST + RPC functions
 - **Estado Global**: Zustand para gestão de estado
 - **UI/UX Moderna**: Tailwind CSS + Framer Motion
 
 ## 📋 Pré-requisitos
 
-- Node.js 16+
-- MongoDB
+- Conta Supabase (gratuita)
+- Conta Vercel (gratuita)
 - Conta Stripe (para pagamentos)
 - Conta Adivin (como revendedor)
 
-## 🛠️ Instalação
+## 🛠️ Configuração
 
-### 1. Clonar o Repositório
-```bash
-git clone https://github.com/gonbenvindo-debug/latinflag.git
-cd latinflag
-```
+### 1. Criar Projeto Supabase
 
-### 2. Instalar Dependências
-```bash
-# Backend
-npm install
+1. Aceda a [supabase.com](https://supabase.com)
+2. Criar novo projeto
+3. Executar o SQL em `supabase/schema.sql`
+4. Executar as functions em `supabase/functions.sql`
+5. Configurar Row Level Security (RLS)
+6. Criar storage buckets:
+   - `products` (público)
+   - `designs` (privado)
 
-# Frontend
-cd client
-npm install
-cd ..
-```
+### 2. Configurar Variáveis de Ambiente
 
-### 3. Configurar Variáveis de Ambiente
-```bash
-# Copiar ficheiro de exemplo
-cp .env.example .env
-
-# Editar .env com as suas configurações
-```
-
-### 4. Criar Pastas de Upload
-```bash
-mkdir -p uploads/products
-mkdir -p uploads/designs
-```
-
-### 5. Iniciar MongoDB
-```bash
-# Usando Docker
-docker run -d -p 27017:27017 --name mongodb mongo
-
-# Ou instalar localmente
-# Siga as instruções para o seu SO
-```
-
-### 6. Iniciar Aplicação
-```bash
-# Iniciar backend (terminal 1)
-npm run dev
-
-# Iniciar frontend (terminal 2)
-npm run client
-```
-
-## ⚙️ Configuração
-
-### Variáveis de Ambiente (.env)
+#### Supabase (.env.local no frontend)
 ```env
-# Database
-MONGODB_URI=mongodb://localhost:27017/latinflag
-
-# JWT Secret
-JWT_SECRET=your_super_secret_jwt_key_here
-
-# Stripe Payment
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
-
-# Email Configuration
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
-
-# Server
-PORT=5000
-NODE_ENV=development
-
-# Admin
-ADMIN_EMAIL=admin@latinflag.com
-ADMIN_PASSWORD=admin123
-```
-
-### Configuração Frontend (.env no client)
-```env
-REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_SUPABASE_URL=your_supabase_project_url
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
 REACT_APP_STRIPE_KEY=pk_test_your_stripe_publishable_key
 REACT_APP_ADMIN_EMAIL=admin@latinflag.com
 ```
+
+#### Vercel Environment Variables
+```
+REACT_APP_SUPABASE_URL=your_supabase_project_url
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
+REACT_APP_STRIPE_KEY=pk_test_your_stripe_publishable_key
+```
+
+### 3. Deploy no Vercel
+
+1. Fazer push do código para GitHub
+2. Conectar repositório ao Vercel
+3. Configurar variáveis de ambiente
+4. Deploy automático
+
+```bash
+# Instalar dependências
+cd client && npm install
+
+# Testar localmente
+npm start
+
+# Build para produção
+npm run build
+```
+
+## ⚙️ Configuração Detalhada
+
+### Supabase Setup
+
+#### 1. Executar Schema SQL
+```sql
+-- Copiar e executar supabase/schema.sql no SQL Editor
+```
+
+#### 2. Configurar Storage
+```sql
+-- Criar buckets
+INSERT INTO storage.buckets (id, name, public) VALUES ('products', 'products', true);
+INSERT INTO storage.buckets (id, name, public) VALUES ('designs', 'designs', false);
+```
+
+#### 3. Configurar Policies
+```sql
+-- As policies já estão definidas no schema.sql
+-- Verificar se estão ativas em Authentication > Policies
+```
+
+#### 4. Configurar Auth
+- Desativar email confirmation (opcional)
+- Configurar redirect URLs
+- Adicionar domínio do Vercel
+
+### Stripe Setup
+
+1. Criar conta em [stripe.com](https://stripe.com)
+2. Obter chaves de API
+3. Configurar webhooks
+4. Adicionar produtos
+
+### Vercel Setup
+
+1. Importar projeto do GitHub
+2. Configurar build settings:
+   - **Build Command**: `cd client && npm run build`
+   - **Output Directory**: `client/build`
+   - **Install Command**: `cd client && npm install`
 
 ## 📚 Estrutura do Projeto
 
@@ -131,47 +141,48 @@ latinflag/
 │   │   ├── components/    # Componentes reutilizáveis
 │   │   ├── pages/         # Páginas da aplicação
 │   │   ├── hooks/         # Hooks personalizados
-│   │   ├── services/      # Serviços de API
+│   │   ├── services/      # Serviços Supabase
 │   │   ├── types/         # Tipos TypeScript
 │   │   └── utils/         # Utilitários
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
 │   └── package.json
-├── models/                # Modelos MongoDB
-├── routes/                # Rotas da API
-├── middleware/            # Middleware Express
-├── uploads/               # Ficheiros upload
-├── server.js              # Servidor principal
-├── package.json
+├── supabase/              # Configurações Supabase
+│   ├── schema.sql         # Schema do banco
+│   └── functions.sql      # Functions RPC
+├── vercel.json            # Configuração Vercel
 └── README.md
 ```
 
 ## 🎯 Como Usar
 
 ### 1. Configurar Produtos
-- Aceda ao painel admin: `/admin`
-- Use credenciais: admin@latinflag.com / admin123
-- Adicione produtos da Adivin (sem mostrar info do fornecedor)
+- Aceda ao Supabase Dashboard
+- Adicione produtos na tabela `products`
+- Upload de imagens para o bucket `products`
+- Não inclua informações do fornecedor
 
 ### 2. Personalizar Design
 - Edite os componentes em `client/src/components/`
-- Modifique cores e estilos em `client/src/index.css`
+- Modifique cores em `tailwind.config.js`
 - Adicione seu logótipo em `client/public/`
 
 ### 3. Configurar Pagamentos
-- Crie conta Stripe em [stripe.com](https://stripe.com)
-- Adicione chaves ao `.env`
-- Configure webhooks se necessário
+- Integre com Stripe (frontend + backend)
+- Configure webhooks no Supabase
+- Teste fluxo de pagamento
 
 ### 4. Integração Adivin
-- Use as rotas admin para enviar encomendas
+- Use as functions admin para gerir encomendas
 - Configure automação se necessário
 - Mantenha preços e margens atualizadas
 
 ## 🔐 Segurança
 
-- **Autenticação JWT**: Tokens seguros com expiração
+- **Supabase Auth**: Autenticação segura com JWT
+- **Row Level Security**: Políticas de acesso granular
 - **Validação de Input**: Sanitização de dados
-- **Rate Limiting**: Proteção contra ataques
-- **Helmet**: Headers de segurança
+- **HTTPS**: Forçado em produção
 - **CORS**: Configuração restrita
 
 ## 📱 Funcionalidades Principais
@@ -200,25 +211,26 @@ latinflag/
 - Gestão de clientes e encomendas
 - Relatórios e analytics
 
-## 🚀 Deploy
+## 🚀 Deploy Automático
 
-### Backend (Heroku/Render)
-```bash
-# Configurar build
-npm install
-
-# Definir variáveis de ambiente
-# Configurar MongoDB Atlas
-# Fazer deploy
-```
-
-### Frontend (Netlify/Vercel)
-```bash
-# Build para produção
-cd client
-npm run build
-
-# Fazer deploy da pasta build
+### GitHub Actions (Opcional)
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to Vercel
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
 ```
 
 ## 🤝 Contribuir
@@ -237,15 +249,15 @@ Este projeto está licenciado sob a licença MIT - veja o ficheiro [LICENSE](LIC
 
 Se tiver problemas ou dúvidas:
 
-1. Verifique a documentação
-2. Abra uma issue no GitHub
-3. Contacte: support@latinflag.pt
+1. Verifique a documentação do Supabase
+2. Verifique os logs do Vercel
+3. Abra uma issue no GitHub
+4. Contacte: support@latinflag.pt
 
 ## 🎉 Demonstração
 
-- **Frontend**: [https://latinflag.pt](https://latinflag.pt)
-- **Admin**: [https://latinflag.pt/admin](https://latinflag.pt/admin)
-- **API**: [https://latinflag.pt/api](https://latinflag.pt/api)
+- **Frontend**: [https://latinflag.vercel.app](https://latinflag.vercel.app)
+- **Supabase**: [https://supabase.com/dashboard](https://supabase.com/dashboard)
 
 ---
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useQuery } from 'react-query';
 import { ArrowRight, Star, Shield, Truck, Clock, Palette, Award } from 'lucide-react';
-import { productService } from '../services/api';
+import { productService } from '../services/supabase';
 import ProductCard from '../components/ProductCard';
 
 const Home: React.FC = () => {

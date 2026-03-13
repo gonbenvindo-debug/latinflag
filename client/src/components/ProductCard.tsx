@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ShoppingCart, Star, Palette } from 'lucide-react';
 import { Product } from '../types';
 import { useCartStore } from '../hooks/useCartStore';
+import { storageService } from '../services/supabase';
 
 interface ProductCardProps {
   product: Product;
